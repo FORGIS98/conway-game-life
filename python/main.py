@@ -8,7 +8,6 @@ SCR_SIZE = (720, 720)
 SCR_COLOR = (50, 50, 50)
 TXT_COLOR = (255, 255, 255)
 
-# tmp values
 BUTTON_LIGHT = (0, 255, 0)
 BUTTON_DARK = (255, 0, 0)
 
@@ -23,14 +22,6 @@ def create_screen():
     return screen, SCR_SIZE, SCR_COLOR
 
 
-def button(screen):
-    small_font = pygame.font.SysFont('Corbel', 35)
-    text = small_font.render('Start', True, TXT_COLOR)
-    w, h = SCR_SIZE
-    screen.blit(text, (w/2 - 50, h - 50))
-    return (w/2 - 50, h - 50)
-
-
 def main():
     screen, scr_size, scr_color = create_screen()
 
@@ -39,7 +30,6 @@ def main():
 
     pre_start = True
     play_game = True
-    grid.draw_board()
 
     pygame.display.update()
     pygame.Surface.fill(screen, scr_color)
@@ -50,37 +40,57 @@ def main():
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pre_start = False  # End program
+                pre_start = False  # End cell selection
+                play_game = False  # End game
             if event.type == pygame.MOUSEBUTTONUP:
                 pos_x, pos_y = pygame.mouse.get_pos()
-                pos_x, pos_y = grid.get_real_pos(pos_x, pos_y)
-                # Select (or deselect) a position
-                grid.select(pos_x, pos_y)
+                if(grid.inside_cells(pos_x, pos_y)):
+                    pos_x, pos_y = grid.get_real_pos(pos_x, pos_y)
+                    # Select (or deselect) a position
+                    grid.select(pos_x, pos_y)
 
-        time.sleep(0.5)  # to be deleted
+                if(grid.click_start(pos_x, pos_y)):
+                    pre_start = False
+
+                if(grid.click_clean(pos_x, pos_y)):
+                    grid.clear_population()
+                    grid.clear(screen, scr_color)
 
         mouse = pygame.mouse.get_pos()
-        print(mouse)
-
-        (w_start, h_start) = button(screen)
-        print(w_start, h_start)
-
-        if (w_start <= mouse[0] <= w_start + 140 and h_start <= mouse[0] <= h_start + 40):
-            pygame.draw.rect(screen, BUTTON_LIGHT, [w_start, h_start, 140, 40])
-        else:
-            pygame.draw.rect(screen, (255, 0, 0), [w_start, h_start, 140, 40])
-
-        button(screen)
+        grid.check_button(mouse, screen)
+        grid.button(screen, "START", "CLEAR")
 
         grid.populate()
         pygame.display.update()
 
+    start_stop = "STOP"
     while play_game:
-        grid.population_state = neighbor.play(grid.population_state)
-        grid.clear(screen, scr_color)
-        grid.populate()
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONUP:
+                pos_x, pos_y = pygame.mouse.get_pos()
+                if(grid.click_start(pos_x, pos_y)):
+                    start_stop = "START" if start_stop == "STOP" else "STOP"
+                if(grid.click_clean(pos_x, pos_y)):
+                    play_game = False  # End game
+
+        if start_stop == "STOP":
+            grid.population_state = neighbor.play(grid.population_state)
+
+            grid.clear(screen, scr_color)
+            grid.check_button(mouse, screen)
+            grid.button(screen, start_stop, "QUIT")
+
+            grid.populate()
+
+            pygame.display.update()
+            time.sleep(0.25)
+
+        mouse = pygame.mouse.get_pos()
+
+        grid.check_button(mouse, screen)
+        grid.button(screen, start_stop, "QUIT")
+
         pygame.display.update()
-        time.sleep(0.5)
 
 
 if __name__ == "__main__":
