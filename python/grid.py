@@ -81,33 +81,33 @@ class Grid:
         self.population_state = np.zeros((self.draw_lines, self.draw_lines))
 
     def click_start(self, pos_x, pos_y):
-        return (pos_x >= 10 and pos_x <= (720/2)+10) and (pos_y >= 680 and pos_y <= 720)
+        return (pos_x >= 10 and pos_x <= (720/2)-10) and (pos_y >= 670 and pos_y <= 710)
 
     def click_clean(self, pos_x, pos_y):
-        return (pos_x >= ((720/2) + 10) and pos_x <= 720) and (pos_y >= 680 and pos_y <= 720)
+        return (pos_x >= ((720/2) + 10) and pos_x <= 710) and (pos_y >= 670 and pos_y <= 710)
 
     def button(self, screen, txt_left, txt_right):
         small_font = pygame.font.SysFont('Corbel', 35)
         text = small_font.render(txt_left, True, TXT_COLOR)
-        screen.blit(text, (10, 680))
+        screen.blit(text, (140, 680))
 
         text = small_font.render(txt_right, True, TXT_COLOR)
-        screen.blit(text, ((720/2) + 10, 680))
+        screen.blit(text, ((720/2) + 140, 680))
 
         return (10, 680)
 
     def check_button(self, mouse, screen):
         (pos_x, pos_y) = mouse
         # Check if mouse is on top of START button
-        if((pos_x >= 10 and pos_x <= (720/2)+10) and (pos_y >= 680 and pos_y <= 720)):
+        if((pos_x >= 10 and pos_x <= (720/2) - 10) and (pos_y >= 670 and pos_y <= 710)):
             pygame.draw.rect(screen, BUTTON_LIGHT, [
-                             10, 680, (720/2) + 10, 720])
+                             10, 670, (720/2) - 10, 40])
         else:
-            pygame.draw.rect(screen, BUTTON_DARK, [10, 680, (720/2) + 10, 720])
+            pygame.draw.rect(screen, BUTTON_DARK, [10, 670, (720/2) - 10, 40])
         # Check if mouse is on top of CLEAR button
-        if((pos_x >= ((720/2) + 10) and pos_x <= 720) and (pos_y >= 680 and pos_y <= 720)):
+        if((pos_x >= ((720/2) + 10) and pos_x <= 710) and (pos_y >= 670 and pos_y <= 710)):
             pygame.draw.rect(screen, BUTTON_LIGHT, [
-                             (720/2) + 10, 680, 720, 720])
+                             (720/2) + 10, 670, 340, 40])
         else:
             pygame.draw.rect(screen, BUTTON_DARK, [
-                             (720/2) + 10, 680, 720, 720])
+                             (720/2) + 10, 670, 340, 40])

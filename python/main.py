@@ -83,7 +83,7 @@ def main():
             grid.populate()
 
             pygame.display.update()
-            time.sleep(0.25)
+            time.sleep(0.20)
 
         mouse = pygame.mouse.get_pos()
 
